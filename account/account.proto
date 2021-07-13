@@ -9,7 +9,7 @@ service AccountService{
   //登录
   rpc Login (LoginRequest) returns(TokenResponse){}
   //查看个人信息
-  rpc GetUserInfo(UserInfoRequest) returns (UserInfoResponse){}
+  rpc GetUserInfo(TokenRequest) returns (UserInfoResponse){}
   //检验token
   rpc CheckToken(TokenRequest) returns (User){}
 }
@@ -35,9 +35,8 @@ message User {
 
 //根据id查看个人信息
 //请求
-message UserInfoRequest {
-  string token=1;
-}
+//tokenrequest
+
 //响应
 message UserInfoResponse {
   int32 id =1;
