@@ -48,7 +48,7 @@ message UserInfoResponse {
 //token生成
 //请求
 message TokenRequest{
-  int32 token = 1;
+  string token = 1;
 }
 
 //响应
