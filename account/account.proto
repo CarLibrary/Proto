@@ -1,0 +1,67 @@
+syntax = "proto3";
+package accountpb;
+
+option go_package = "github.com/CarLibrary/proto/accountpb";
+//服务注册
+service AccountService{
+  //注册
+  rpc Signup (SignupRequset) returns(User){}
+  //登录
+  rpc Login (LoginRequest) returns(User){}
+  //查看个人信息
+  rpc GetUserInfo(UserInfoRequest) returns (UserInfoResponse){}
+  //获取token
+  rpc GetToken(TokenRequest) returns (TokenResponse){}
+}
+
+//注册请求
+message SignupRequset {
+  string username = 1;
+  string password =2;
+  optional string head_url = 3;
+  optional string sgin =4;
+}
+
+//登录请求
+message LoginRequest {
+  string username = 1;
+  string password=2;
+}
+//用户结构
+message User {
+  int32 id = 1;
+  string username =2;
+}
+
+//根据id查看个人信息
+//请求
+message UserInfoRequest {
+  int32 id = 1;
+}
+//响应
+message UserInfoResponse {
+  int32 id =1;
+  string username = 2;
+  string head_url =3;
+  string sign =4;
+}
+
+//token生成
+//请求
+message TokenRequest{
+  int32 id = 1;
+}
+//响应
+message TokenResponse{
+  string token =1;
+  //todo
+}
+
+
+
+
+
+
+
+
+
