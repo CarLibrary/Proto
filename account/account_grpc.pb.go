@@ -25,7 +25,7 @@ type AccountServiceClient interface {
 	//查看个人信息
 	GetUserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserInfoResponse, error)
 	//检验token
-	CheckToken(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*TokenResponse, error)
+	CheckToken(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*User, error)
 }
 
 type accountServiceClient struct {
@@ -63,8 +63,8 @@ func (c *accountServiceClient) GetUserInfo(ctx context.Context, in *UserInfoRequ
 	return out, nil
 }
 
-func (c *accountServiceClient) CheckToken(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*TokenResponse, error) {
-	out := new(TokenResponse)
+func (c *accountServiceClient) CheckToken(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
 	err := c.cc.Invoke(ctx, "/accountpb.AccountService/CheckToken", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -83,7 +83,7 @@ type AccountServiceServer interface {
 	//查看个人信息
 	GetUserInfo(context.Context, *UserInfoRequest) (*UserInfoResponse, error)
 	//检验token
-	CheckToken(context.Context, *TokenRequest) (*TokenResponse, error)
+	CheckToken(context.Context, *TokenRequest) (*User, error)
 	mustEmbedUnimplementedAccountServiceServer()
 }
 
@@ -100,7 +100,7 @@ func (UnimplementedAccountServiceServer) Login(context.Context, *LoginRequest) (
 func (UnimplementedAccountServiceServer) GetUserInfo(context.Context, *UserInfoRequest) (*UserInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfo not implemented")
 }
-func (UnimplementedAccountServiceServer) CheckToken(context.Context, *TokenRequest) (*TokenResponse, error) {
+func (UnimplementedAccountServiceServer) CheckToken(context.Context, *TokenRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckToken not implemented")
 }
 func (UnimplementedAccountServiceServer) mustEmbedUnimplementedAccountServiceServer() {}
