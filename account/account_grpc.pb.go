@@ -21,7 +21,7 @@ type AccountServiceClient interface {
 	//注册
 	Signup(ctx context.Context, in *SignupRequset, opts ...grpc.CallOption) (*User, error)
 	//登录
-	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*User, error)
+	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*TokenResponse, error)
 	//查看个人信息
 	GetUserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserInfoResponse, error)
 	//获取token
@@ -45,8 +45,8 @@ func (c *accountServiceClient) Signup(ctx context.Context, in *SignupRequset, op
 	return out, nil
 }
 
-func (c *accountServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*User, error) {
-	out := new(User)
+func (c *accountServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*TokenResponse, error) {
+	out := new(TokenResponse)
 	err := c.cc.Invoke(ctx, "/accountpb.AccountService/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -79,7 +79,7 @@ type AccountServiceServer interface {
 	//注册
 	Signup(context.Context, *SignupRequset) (*User, error)
 	//登录
-	Login(context.Context, *LoginRequest) (*User, error)
+	Login(context.Context, *LoginRequest) (*TokenResponse, error)
 	//查看个人信息
 	GetUserInfo(context.Context, *UserInfoRequest) (*UserInfoResponse, error)
 	//获取token
@@ -94,7 +94,7 @@ type UnimplementedAccountServiceServer struct {
 func (UnimplementedAccountServiceServer) Signup(context.Context, *SignupRequset) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Signup not implemented")
 }
-func (UnimplementedAccountServiceServer) Login(context.Context, *LoginRequest) (*User, error) {
+func (UnimplementedAccountServiceServer) Login(context.Context, *LoginRequest) (*TokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
 func (UnimplementedAccountServiceServer) GetUserInfo(context.Context, *UserInfoRequest) (*UserInfoResponse, error) {

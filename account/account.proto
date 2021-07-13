@@ -7,7 +7,7 @@ service AccountService{
   //注册
   rpc Signup (SignupRequset) returns(User){}
   //登录
-  rpc Login (LoginRequest) returns(User){}
+  rpc Login (LoginRequest) returns(TokenResponse){}
   //查看个人信息
   rpc GetUserInfo(UserInfoRequest) returns (UserInfoResponse){}
   //获取token
