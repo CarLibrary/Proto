@@ -36,8 +36,7 @@ message User {
 //根据id查看个人信息
 //请求
 message UserInfoRequest {
-  int32 id = 1;
-  string token=2;
+  string token=1;
 }
 //响应
 message UserInfoResponse {
