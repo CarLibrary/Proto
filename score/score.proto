@@ -10,12 +10,16 @@ service ScoreService{
 
 //请求
 message Score{
+
+  //token
+  string Token = 1;
+
   //品牌
-  string CarBand=1;
+  string CarBand=2;
   //车系
-  string CarSeries=2;
+  string CarSeries=3;
   //分数
-  float Score=3;
+  float Score=4;
 
 }
 
