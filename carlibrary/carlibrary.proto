@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package carlibrary;
+
+option go_package = "github.com/CarLibrary/proto/carlibrary";
+
+service CarLibraryService{
+  //查看所有品牌
+  rpc FindALLCarBand(Empty) returns (CarBandList);
+  //查看某品牌的全部车系
+  rpc FindAllCarSeries(CarSeriesRequest) returns (CarSeriesList);
+  //查看某品牌的某车系的全部车型
+  rpc FindAllCarModel(CarModelRequest) returns (CarModelList);
+}
+//请求
+message Empty{}
+
+message CarSeriesRequest{
+  string car_band=1;
+}
+
+message CarModelRequest{
+  //品牌
+  string car_band=1;
+  //车系
+  string car_series=2;
+}
+
+//响应
+//车的品牌
+message CarBand {
+  //品牌
+  string car_band=1;
+  //品牌logo
+  string car_band_logo=2;
+}
+
+message CarBandList{
+  repeated CarBand car_bands=1;
+}
+
+//车系
+message CarSeries {
+  //车系
+  string car_series=1;
+  //车系图片
+  string car_picture=2;
+  //车系评分
+  float car_point=3;
+  //车系参考价
+  string car_price=4;
+}
+
+message CarSeriesList {
+  repeated CarSeries car_series= 1;
+}
+
+//车型
+message CarModel {
+  CarSeries car_series=1;
+  //车型名
+  string car_model=2;
+  //车型价格
+  string car_model_price=3;
+
+}
+
+message CarModelList{
+  repeated CarModel car_model = 1;
+}
