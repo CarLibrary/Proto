@@ -19,11 +19,11 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CarLibraryServiceClient interface {
 	//查看所有品牌
-	FindALLCarBand(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*CarBandList, error)
+	FindALLCarBand(ctx context.Context, in *Empty, opts ...grpc.CallOption) (CarLibraryService_FindALLCarBandClient, error)
 	//查看某品牌的全部车系
-	FindAllCarSeries(ctx context.Context, in *CarSeriesRequest, opts ...grpc.CallOption) (*CarSeriesList, error)
+	FindAllCarSeries(ctx context.Context, in *CarSeriesRequest, opts ...grpc.CallOption) (CarLibraryService_FindAllCarSeriesClient, error)
 	//查看某品牌的某车系的全部车型
-	FindAllCarModel(ctx context.Context, in *CarModelRequest, opts ...grpc.CallOption) (*CarModelList, error)
+	FindAllCarModel(ctx context.Context, in *CarModelRequest, opts ...grpc.CallOption) (CarLibraryService_FindAllCarModelClient, error)
 }
 
 type carLibraryServiceClient struct {
@@ -34,31 +34,100 @@ func NewCarLibraryServiceClient(cc grpc.ClientConnInterface) CarLibraryServiceCl
 	return &carLibraryServiceClient{cc}
 }
 
-func (c *carLibraryServiceClient) FindALLCarBand(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*CarBandList, error) {
-	out := new(CarBandList)
-	err := c.cc.Invoke(ctx, "/carlibrary.CarLibraryService/FindALLCarBand", in, out, opts...)
+func (c *carLibraryServiceClient) FindALLCarBand(ctx context.Context, in *Empty, opts ...grpc.CallOption) (CarLibraryService_FindALLCarBandClient, error) {
+	stream, err := c.cc.NewStream(ctx, &CarLibraryService_ServiceDesc.Streams[0], "/carlibrary.CarLibraryService/FindALLCarBand", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &carLibraryServiceFindALLCarBandClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
 }
 
-func (c *carLibraryServiceClient) FindAllCarSeries(ctx context.Context, in *CarSeriesRequest, opts ...grpc.CallOption) (*CarSeriesList, error) {
-	out := new(CarSeriesList)
-	err := c.cc.Invoke(ctx, "/carlibrary.CarLibraryService/FindAllCarSeries", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
+type CarLibraryService_FindALLCarBandClient interface {
+	Recv() (*CarBand, error)
+	grpc.ClientStream
 }
 
-func (c *carLibraryServiceClient) FindAllCarModel(ctx context.Context, in *CarModelRequest, opts ...grpc.CallOption) (*CarModelList, error) {
-	out := new(CarModelList)
-	err := c.cc.Invoke(ctx, "/carlibrary.CarLibraryService/FindAllCarModel", in, out, opts...)
+type carLibraryServiceFindALLCarBandClient struct {
+	grpc.ClientStream
+}
+
+func (x *carLibraryServiceFindALLCarBandClient) Recv() (*CarBand, error) {
+	m := new(CarBand)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *carLibraryServiceClient) FindAllCarSeries(ctx context.Context, in *CarSeriesRequest, opts ...grpc.CallOption) (CarLibraryService_FindAllCarSeriesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &CarLibraryService_ServiceDesc.Streams[1], "/carlibrary.CarLibraryService/FindAllCarSeries", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &carLibraryServiceFindAllCarSeriesClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type CarLibraryService_FindAllCarSeriesClient interface {
+	Recv() (*CarSeries, error)
+	grpc.ClientStream
+}
+
+type carLibraryServiceFindAllCarSeriesClient struct {
+	grpc.ClientStream
+}
+
+func (x *carLibraryServiceFindAllCarSeriesClient) Recv() (*CarSeries, error) {
+	m := new(CarSeries)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *carLibraryServiceClient) FindAllCarModel(ctx context.Context, in *CarModelRequest, opts ...grpc.CallOption) (CarLibraryService_FindAllCarModelClient, error) {
+	stream, err := c.cc.NewStream(ctx, &CarLibraryService_ServiceDesc.Streams[2], "/carlibrary.CarLibraryService/FindAllCarModel", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &carLibraryServiceFindAllCarModelClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type CarLibraryService_FindAllCarModelClient interface {
+	Recv() (*CarModel, error)
+	grpc.ClientStream
+}
+
+type carLibraryServiceFindAllCarModelClient struct {
+	grpc.ClientStream
+}
+
+func (x *carLibraryServiceFindAllCarModelClient) Recv() (*CarModel, error) {
+	m := new(CarModel)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // CarLibraryServiceServer is the server API for CarLibraryService service.
@@ -66,11 +135,11 @@ func (c *carLibraryServiceClient) FindAllCarModel(ctx context.Context, in *CarMo
 // for forward compatibility
 type CarLibraryServiceServer interface {
 	//查看所有品牌
-	FindALLCarBand(context.Context, *Empty) (*CarBandList, error)
+	FindALLCarBand(*Empty, CarLibraryService_FindALLCarBandServer) error
 	//查看某品牌的全部车系
-	FindAllCarSeries(context.Context, *CarSeriesRequest) (*CarSeriesList, error)
+	FindAllCarSeries(*CarSeriesRequest, CarLibraryService_FindAllCarSeriesServer) error
 	//查看某品牌的某车系的全部车型
-	FindAllCarModel(context.Context, *CarModelRequest) (*CarModelList, error)
+	FindAllCarModel(*CarModelRequest, CarLibraryService_FindAllCarModelServer) error
 	mustEmbedUnimplementedCarLibraryServiceServer()
 }
 
@@ -78,14 +147,14 @@ type CarLibraryServiceServer interface {
 type UnimplementedCarLibraryServiceServer struct {
 }
 
-func (UnimplementedCarLibraryServiceServer) FindALLCarBand(context.Context, *Empty) (*CarBandList, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindALLCarBand not implemented")
+func (UnimplementedCarLibraryServiceServer) FindALLCarBand(*Empty, CarLibraryService_FindALLCarBandServer) error {
+	return status.Errorf(codes.Unimplemented, "method FindALLCarBand not implemented")
 }
-func (UnimplementedCarLibraryServiceServer) FindAllCarSeries(context.Context, *CarSeriesRequest) (*CarSeriesList, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindAllCarSeries not implemented")
+func (UnimplementedCarLibraryServiceServer) FindAllCarSeries(*CarSeriesRequest, CarLibraryService_FindAllCarSeriesServer) error {
+	return status.Errorf(codes.Unimplemented, "method FindAllCarSeries not implemented")
 }
-func (UnimplementedCarLibraryServiceServer) FindAllCarModel(context.Context, *CarModelRequest) (*CarModelList, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindAllCarModel not implemented")
+func (UnimplementedCarLibraryServiceServer) FindAllCarModel(*CarModelRequest, CarLibraryService_FindAllCarModelServer) error {
+	return status.Errorf(codes.Unimplemented, "method FindAllCarModel not implemented")
 }
 func (UnimplementedCarLibraryServiceServer) mustEmbedUnimplementedCarLibraryServiceServer() {}
 
@@ -100,58 +169,67 @@ func RegisterCarLibraryServiceServer(s grpc.ServiceRegistrar, srv CarLibraryServ
 	s.RegisterService(&CarLibraryService_ServiceDesc, srv)
 }
 
-func _CarLibraryService_FindALLCarBand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
-	if err := dec(in); err != nil {
-		return nil, err
+func _CarLibraryService_FindALLCarBand_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(CarLibraryServiceServer).FindALLCarBand(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/carlibrary.CarLibraryService/FindALLCarBand",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CarLibraryServiceServer).FindALLCarBand(ctx, req.(*Empty))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(CarLibraryServiceServer).FindALLCarBand(m, &carLibraryServiceFindALLCarBandServer{stream})
 }
 
-func _CarLibraryService_FindAllCarSeries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CarSeriesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CarLibraryServiceServer).FindAllCarSeries(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/carlibrary.CarLibraryService/FindAllCarSeries",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CarLibraryServiceServer).FindAllCarSeries(ctx, req.(*CarSeriesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+type CarLibraryService_FindALLCarBandServer interface {
+	Send(*CarBand) error
+	grpc.ServerStream
 }
 
-func _CarLibraryService_FindAllCarModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CarModelRequest)
-	if err := dec(in); err != nil {
-		return nil, err
+type carLibraryServiceFindALLCarBandServer struct {
+	grpc.ServerStream
+}
+
+func (x *carLibraryServiceFindALLCarBandServer) Send(m *CarBand) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _CarLibraryService_FindAllCarSeries_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(CarSeriesRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(CarLibraryServiceServer).FindAllCarModel(ctx, in)
+	return srv.(CarLibraryServiceServer).FindAllCarSeries(m, &carLibraryServiceFindAllCarSeriesServer{stream})
+}
+
+type CarLibraryService_FindAllCarSeriesServer interface {
+	Send(*CarSeries) error
+	grpc.ServerStream
+}
+
+type carLibraryServiceFindAllCarSeriesServer struct {
+	grpc.ServerStream
+}
+
+func (x *carLibraryServiceFindAllCarSeriesServer) Send(m *CarSeries) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _CarLibraryService_FindAllCarModel_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(CarModelRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/carlibrary.CarLibraryService/FindAllCarModel",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CarLibraryServiceServer).FindAllCarModel(ctx, req.(*CarModelRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(CarLibraryServiceServer).FindAllCarModel(m, &carLibraryServiceFindAllCarModelServer{stream})
+}
+
+type CarLibraryService_FindAllCarModelServer interface {
+	Send(*CarModel) error
+	grpc.ServerStream
+}
+
+type carLibraryServiceFindAllCarModelServer struct {
+	grpc.ServerStream
+}
+
+func (x *carLibraryServiceFindAllCarModelServer) Send(m *CarModel) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 // CarLibraryService_ServiceDesc is the grpc.ServiceDesc for CarLibraryService service.
@@ -160,20 +238,23 @@ func _CarLibraryService_FindAllCarModel_Handler(srv interface{}, ctx context.Con
 var CarLibraryService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "carlibrary.CarLibraryService",
 	HandlerType: (*CarLibraryServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "FindALLCarBand",
-			Handler:    _CarLibraryService_FindALLCarBand_Handler,
+			StreamName:    "FindALLCarBand",
+			Handler:       _CarLibraryService_FindALLCarBand_Handler,
+			ServerStreams: true,
 		},
 		{
-			MethodName: "FindAllCarSeries",
-			Handler:    _CarLibraryService_FindAllCarSeries_Handler,
+			StreamName:    "FindAllCarSeries",
+			Handler:       _CarLibraryService_FindAllCarSeries_Handler,
+			ServerStreams: true,
 		},
 		{
-			MethodName: "FindAllCarModel",
-			Handler:    _CarLibraryService_FindAllCarModel_Handler,
+			StreamName:    "FindAllCarModel",
+			Handler:       _CarLibraryService_FindAllCarModel_Handler,
+			ServerStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "carlibrary.proto",
 }
