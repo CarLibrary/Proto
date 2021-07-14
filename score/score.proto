@@ -15,7 +15,7 @@ message Score{
   //车系
   string CarSeries=2;
   //分数
-  int32 Score=3;
+  float Score=3;
 
 }
 
