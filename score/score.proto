@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package score;
+
+option go_package = "github.com/CarLibrary/proto/score";
+
+service ScoreService{
+  rpc MakeScore(Score) returns(Score);
+}
+
+//请求
+message Score{
+  //品牌
+  string CarBand=1;
+  //车系
+  string CarSeries=2;
+  //分数
+  int32 Score=3;
+
+}
+
+//返回
