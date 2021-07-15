@@ -18,7 +18,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ScoreServiceClient interface {
-	MakeScore(ctx context.Context, in *Score, opts ...grpc.CallOption) (*Score, error)
+	//打分
+	MakeScore(ctx context.Context, in *ScoreRequest, opts ...grpc.CallOption) (*ScoreResponse, error)
+	//修改评分
+	ModifyScore(ctx context.Context, in *ScoreResponse, opts ...grpc.CallOption) (*ScoreResponse, error)
+	//查看评分
+	FindMYScore(ctx context.Context, in *MyScoresRequest, opts ...grpc.CallOption) (ScoreService_FindMYScoreClient, error)
 }
 
 type scoreServiceClient struct {
@@ -29,8 +34,8 @@ func NewScoreServiceClient(cc grpc.ClientConnInterface) ScoreServiceClient {
 	return &scoreServiceClient{cc}
 }
 
-func (c *scoreServiceClient) MakeScore(ctx context.Context, in *Score, opts ...grpc.CallOption) (*Score, error) {
-	out := new(Score)
+func (c *scoreServiceClient) MakeScore(ctx context.Context, in *ScoreRequest, opts ...grpc.CallOption) (*ScoreResponse, error) {
+	out := new(ScoreResponse)
 	err := c.cc.Invoke(ctx, "/score.ScoreService/MakeScore", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -38,11 +43,57 @@ func (c *scoreServiceClient) MakeScore(ctx context.Context, in *Score, opts ...g
 	return out, nil
 }
 
+func (c *scoreServiceClient) ModifyScore(ctx context.Context, in *ScoreResponse, opts ...grpc.CallOption) (*ScoreResponse, error) {
+	out := new(ScoreResponse)
+	err := c.cc.Invoke(ctx, "/score.ScoreService/ModifyScore", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scoreServiceClient) FindMYScore(ctx context.Context, in *MyScoresRequest, opts ...grpc.CallOption) (ScoreService_FindMYScoreClient, error) {
+	stream, err := c.cc.NewStream(ctx, &ScoreService_ServiceDesc.Streams[0], "/score.ScoreService/FindMYScore", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &scoreServiceFindMYScoreClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type ScoreService_FindMYScoreClient interface {
+	Recv() (*ScoreResponse, error)
+	grpc.ClientStream
+}
+
+type scoreServiceFindMYScoreClient struct {
+	grpc.ClientStream
+}
+
+func (x *scoreServiceFindMYScoreClient) Recv() (*ScoreResponse, error) {
+	m := new(ScoreResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // ScoreServiceServer is the server API for ScoreService service.
 // All implementations must embed UnimplementedScoreServiceServer
 // for forward compatibility
 type ScoreServiceServer interface {
-	MakeScore(context.Context, *Score) (*Score, error)
+	//打分
+	MakeScore(context.Context, *ScoreRequest) (*ScoreResponse, error)
+	//修改评分
+	ModifyScore(context.Context, *ScoreResponse) (*ScoreResponse, error)
+	//查看评分
+	FindMYScore(*MyScoresRequest, ScoreService_FindMYScoreServer) error
 	mustEmbedUnimplementedScoreServiceServer()
 }
 
@@ -50,8 +101,14 @@ type ScoreServiceServer interface {
 type UnimplementedScoreServiceServer struct {
 }
 
-func (UnimplementedScoreServiceServer) MakeScore(context.Context, *Score) (*Score, error) {
+func (UnimplementedScoreServiceServer) MakeScore(context.Context, *ScoreRequest) (*ScoreResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MakeScore not implemented")
+}
+func (UnimplementedScoreServiceServer) ModifyScore(context.Context, *ScoreResponse) (*ScoreResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ModifyScore not implemented")
+}
+func (UnimplementedScoreServiceServer) FindMYScore(*MyScoresRequest, ScoreService_FindMYScoreServer) error {
+	return status.Errorf(codes.Unimplemented, "method FindMYScore not implemented")
 }
 func (UnimplementedScoreServiceServer) mustEmbedUnimplementedScoreServiceServer() {}
 
@@ -67,7 +124,7 @@ func RegisterScoreServiceServer(s grpc.ServiceRegistrar, srv ScoreServiceServer)
 }
 
 func _ScoreService_MakeScore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Score)
+	in := new(ScoreRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -79,9 +136,48 @@ func _ScoreService_MakeScore_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/score.ScoreService/MakeScore",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ScoreServiceServer).MakeScore(ctx, req.(*Score))
+		return srv.(ScoreServiceServer).MakeScore(ctx, req.(*ScoreRequest))
 	}
 	return interceptor(ctx, in, info, handler)
+}
+
+func _ScoreService_ModifyScore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ScoreResponse)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScoreServiceServer).ModifyScore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/score.ScoreService/ModifyScore",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScoreServiceServer).ModifyScore(ctx, req.(*ScoreResponse))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScoreService_FindMYScore_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(MyScoresRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ScoreServiceServer).FindMYScore(m, &scoreServiceFindMYScoreServer{stream})
+}
+
+type ScoreService_FindMYScoreServer interface {
+	Send(*ScoreResponse) error
+	grpc.ServerStream
+}
+
+type scoreServiceFindMYScoreServer struct {
+	grpc.ServerStream
+}
+
+func (x *scoreServiceFindMYScoreServer) Send(m *ScoreResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 // ScoreService_ServiceDesc is the grpc.ServiceDesc for ScoreService service.
@@ -95,7 +191,17 @@ var ScoreService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "MakeScore",
 			Handler:    _ScoreService_MakeScore_Handler,
 		},
+		{
+			MethodName: "ModifyScore",
+			Handler:    _ScoreService_ModifyScore_Handler,
+		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "FindMYScore",
+			Handler:       _ScoreService_FindMYScore_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "score.proto",
 }
