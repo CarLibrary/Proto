@@ -46,7 +46,7 @@ message CarSeries {
   //车系图片
   string car_picture=2;
   //车系评分
-  float car_point=3;
+  string car_point=3;
   //车系参考价
   string car_price=4;
 }
