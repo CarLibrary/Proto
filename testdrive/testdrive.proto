@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package score;
+
+option go_package = "github.com/CarLibrary/proto/testdrive";
+
+service TestDriveServer{
+  //试驾
+  rpc TestDrive(TestDriveRequest) returns (TestDriveResponse);
+  //查看我的试驾
+  rpc FindMyTestDrive(MyTestDriveRequest) returns (stream TestDriveResponse);
+}
+
+
+//请求
+message TestDriveRequest {
+  //userid
+  int32 Userid =1;
+  //品牌
+  string Carband=2;
+  //车系
+  string CarSeries=3;
+  //城市
+  string City=4;
+  //姓名
+  string Username=5;
+  //手机号
+  string PhoneNumber=6;
+
+}
+
+message MyTestDriveRequest {
+  //userid
+  int32 Userid =1;
+
+}
+
+//返回
+message TestDriveResponse {
+
+  //品牌
+  string Carband=2;
+  //车系
+  string CarSeries=3;
+  //城市
+  string City=4;
+  //status
+  string Status=5;
+}
