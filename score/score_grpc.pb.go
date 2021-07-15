@@ -21,7 +21,7 @@ type ScoreServiceClient interface {
 	//打分
 	MakeScore(ctx context.Context, in *ScoreRequest, opts ...grpc.CallOption) (*ScoreResponse, error)
 	//修改评分
-	ModifyScore(ctx context.Context, in *ScoreResponse, opts ...grpc.CallOption) (*ScoreResponse, error)
+	ModifyScore(ctx context.Context, in *ScoreRequest, opts ...grpc.CallOption) (*ScoreResponse, error)
 	//查看评分
 	FindMYScore(ctx context.Context, in *MyScoresRequest, opts ...grpc.CallOption) (ScoreService_FindMYScoreClient, error)
 }
@@ -43,7 +43,7 @@ func (c *scoreServiceClient) MakeScore(ctx context.Context, in *ScoreRequest, op
 	return out, nil
 }
 
-func (c *scoreServiceClient) ModifyScore(ctx context.Context, in *ScoreResponse, opts ...grpc.CallOption) (*ScoreResponse, error) {
+func (c *scoreServiceClient) ModifyScore(ctx context.Context, in *ScoreRequest, opts ...grpc.CallOption) (*ScoreResponse, error) {
 	out := new(ScoreResponse)
 	err := c.cc.Invoke(ctx, "/score.ScoreService/ModifyScore", in, out, opts...)
 	if err != nil {
@@ -91,7 +91,7 @@ type ScoreServiceServer interface {
 	//打分
 	MakeScore(context.Context, *ScoreRequest) (*ScoreResponse, error)
 	//修改评分
-	ModifyScore(context.Context, *ScoreResponse) (*ScoreResponse, error)
+	ModifyScore(context.Context, *ScoreRequest) (*ScoreResponse, error)
 	//查看评分
 	FindMYScore(*MyScoresRequest, ScoreService_FindMYScoreServer) error
 	mustEmbedUnimplementedScoreServiceServer()
@@ -104,7 +104,7 @@ type UnimplementedScoreServiceServer struct {
 func (UnimplementedScoreServiceServer) MakeScore(context.Context, *ScoreRequest) (*ScoreResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MakeScore not implemented")
 }
-func (UnimplementedScoreServiceServer) ModifyScore(context.Context, *ScoreResponse) (*ScoreResponse, error) {
+func (UnimplementedScoreServiceServer) ModifyScore(context.Context, *ScoreRequest) (*ScoreResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ModifyScore not implemented")
 }
 func (UnimplementedScoreServiceServer) FindMYScore(*MyScoresRequest, ScoreService_FindMYScoreServer) error {
@@ -142,7 +142,7 @@ func _ScoreService_MakeScore_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _ScoreService_ModifyScore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ScoreResponse)
+	in := new(ScoreRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -154,7 +154,7 @@ func _ScoreService_ModifyScore_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/score.ScoreService/ModifyScore",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ScoreServiceServer).ModifyScore(ctx, req.(*ScoreResponse))
+		return srv.(ScoreServiceServer).ModifyScore(ctx, req.(*ScoreRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

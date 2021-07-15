@@ -8,7 +8,7 @@ service ScoreService{
   //打分
   rpc MakeScore(ScoreRequest) returns(ScoreResponse);
   //修改评分
-  rpc ModifyScore(ScoreResponse) returns(ScoreResponse);
+  rpc ModifyScore(ScoreRequest) returns(ScoreResponse);
   //查看评分
   rpc FindMYScore(MyScoresRequest) returns(stream ScoreResponse);
 }
