@@ -23,7 +23,7 @@ type AccountServiceClient interface {
 	//登录
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*TokenResponse, error)
 	//查看个人信息
-	GetUserInfo(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*UserInfoResponse, error)
+	GetUserInfo(ctx context.Context, in *InfoRequest, opts ...grpc.CallOption) (*UserInfoResponse, error)
 	//检验token
 	CheckToken(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*User, error)
 }
@@ -54,7 +54,7 @@ func (c *accountServiceClient) Login(ctx context.Context, in *LoginRequest, opts
 	return out, nil
 }
 
-func (c *accountServiceClient) GetUserInfo(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*UserInfoResponse, error) {
+func (c *accountServiceClient) GetUserInfo(ctx context.Context, in *InfoRequest, opts ...grpc.CallOption) (*UserInfoResponse, error) {
 	out := new(UserInfoResponse)
 	err := c.cc.Invoke(ctx, "/accountpb.AccountService/GetUserInfo", in, out, opts...)
 	if err != nil {
@@ -81,7 +81,7 @@ type AccountServiceServer interface {
 	//登录
 	Login(context.Context, *LoginRequest) (*TokenResponse, error)
 	//查看个人信息
-	GetUserInfo(context.Context, *TokenRequest) (*UserInfoResponse, error)
+	GetUserInfo(context.Context, *InfoRequest) (*UserInfoResponse, error)
 	//检验token
 	CheckToken(context.Context, *TokenRequest) (*User, error)
 	mustEmbedUnimplementedAccountServiceServer()
@@ -97,7 +97,7 @@ func (UnimplementedAccountServiceServer) Signup(context.Context, *SignupRequset)
 func (UnimplementedAccountServiceServer) Login(context.Context, *LoginRequest) (*TokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedAccountServiceServer) GetUserInfo(context.Context, *TokenRequest) (*UserInfoResponse, error) {
+func (UnimplementedAccountServiceServer) GetUserInfo(context.Context, *InfoRequest) (*UserInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfo not implemented")
 }
 func (UnimplementedAccountServiceServer) CheckToken(context.Context, *TokenRequest) (*User, error) {
@@ -153,7 +153,7 @@ func _AccountService_Login_Handler(srv interface{}, ctx context.Context, dec fun
 }
 
 func _AccountService_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TokenRequest)
+	in := new(InfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func _AccountService_GetUserInfo_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/accountpb.AccountService/GetUserInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServiceServer).GetUserInfo(ctx, req.(*TokenRequest))
+		return srv.(AccountServiceServer).GetUserInfo(ctx, req.(*InfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
