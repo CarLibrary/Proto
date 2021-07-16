@@ -35,9 +35,6 @@ message CarBand {
   string car_band_logo=2;
 }
 
-//message CarBandList{
-//  repeated CarBand car_bands=1;
-//}
 
 //车系
 message CarSeries {
@@ -51,13 +48,12 @@ message CarSeries {
   string car_price=4;
 }
 
-//message CarSeriesList {
-//  repeated CarSeries car_series= 1;
-//}
+
 
 //车型
 message CarModel {
-  CarSeries car_series=1;
+  //车系名
+  string car_series=1;
   //车型名
   string car_model=2;
   //车型价格
@@ -65,6 +61,3 @@ message CarModel {
 
 }
 
-//message CarModelList{
-//  repeated CarModel car_model = 1;
-//}
